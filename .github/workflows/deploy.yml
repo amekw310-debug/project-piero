@@ -38,11 +38,10 @@ jobs:
         run: npm run build
 
       - name: Setup Pages
+        # 前提: リポジトリの Settings > Pages > Source を "GitHub Actions" に
+        # 一度だけ設定しておく必要がある（Actions の GITHUB_TOKEN からは
+        # Pages サイトを新規作成できないため）。
         uses: actions/configure-pages@v5
-        with:
-          # Pages がまだ有効でない場合、この設定で自動的に有効化する
-          # （build_type=workflow でセットアップされる）。
-          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
