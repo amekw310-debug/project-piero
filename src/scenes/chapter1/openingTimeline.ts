@@ -26,7 +26,10 @@ function setInitial(refs: StageRefs): void {
     filter: "brightness(0.12)",
     transformOrigin: "50% 50%",
   });
-  gsap.set([refs.eyes.left, refs.eyes.right], { opacity: 0, xPercent: -12 });
+  gsap.set(refs.pieroBlink, { opacity: 0 });
+  // 目の反射オーバーレイは無効（開眼後は通常PIERO本来の青い瞳に戻す）。
+  // 要素は将来のパーツ差し替え用アンカーとして残す。
+  gsap.set([refs.eyes.left, refs.eyes.right], { opacity: 0 });
   refs.titleLines.forEach((line) =>
     gsap.set(line.querySelectorAll(".seg"), { opacity: 0 })
   );
@@ -53,7 +56,8 @@ export function applyFinalState(refs: StageRefs): void {
   gsap.set(refs.vignette, { opacity: 0.92 });
   gsap.set(refs.titleScrim, { opacity: 1 });
   gsap.set(refs.piero, { opacity: 1, yPercent: 0, scale: 1, filter: "brightness(1)" });
-  gsap.set([refs.eyes.left, refs.eyes.right], { opacity: 0.46, xPercent: 0 });
+  gsap.set(refs.pieroBlink, { opacity: 0 });
+  gsap.set([refs.eyes.left, refs.eyes.right], { opacity: 0 });
   refs.titleLines.forEach((line) =>
     gsap.set(line.querySelectorAll(".seg"), { opacity: 1 })
   );
@@ -65,7 +69,6 @@ export function createOpeningTimeline(
   onComplete: () => void
 ): gsap.core.Timeline {
   setInitial(refs);
-  const eyes = [refs.eyes.left, refs.eyes.right];
   const tl = gsap.timeline({ onComplete });
 
   // 0:02–0:04 遊園地が暗闇から目覚める
@@ -92,15 +95,17 @@ export function createOpeningTimeline(
     T.pieroAt
   );
 
-  // 0:07–0:09 視線の代替演出:
-  //   piero.png は1枚画像のため瞳自体は動かさない（不自然な変形はしない）。
-  //   発光ではなく「濡れた瞳に外部のネオン/スポットがゆっくり反射した」ように、
-  //   控えめな反射をそっと灯し、そのまま微かに残す（点滅・パルスはしない）。
-  //   将来 piero-pupil-l/r.png を分割したら実際の瞳移動へ置き換える。
-  tl.to(eyes, { opacity: 0.6, xPercent: 0, duration: 1.1, ease: "power2.out" }, T.gazeAt);
-  tl.to(eyes, { opacity: 0.46, duration: 1.0, ease: "sine.inOut" }, T.gazeAt + 1.3); // 微かな反射として持続
-  // ごく僅かな「気づき」（顔は動かさず、全体を極小スケールで前後）
-  tl.to(refs.piero, { scale: 1.012, duration: 0.5, yoyo: true, repeat: 1, ease: "sine.inOut" }, T.gazeAt + 0.25);
+  // 0:07–0:09 一度だけの自然な瞬き（通常PIERO → 目閉じPIERO → 通常PIERO）。
+  //   目の領域だけをマスクした「目閉じPIERO」を通常PIEROの上に重ね、
+  //   その不透明度のみを短くクロスフェード（合計 ~0.4秒）。
+  //   マスク外（顔・鼻・帽子・髪・襟）は常に通常PIERO = 動いて見えない。
+  //   パッと切り替えず、ごく短いフェードで自然な瞬きにする。
+  tl.to(refs.pieroBlink, { opacity: 1, duration: T.blinkIn, ease: "power2.inOut" }, T.blinkAt);
+  tl.to(
+    refs.pieroBlink,
+    { opacity: 0, duration: T.blinkOut, ease: "power2.inOut" },
+    T.blinkAt + T.blinkIn
+  );
 
   // 0:09–0:12 タイトル電飾（部分点灯 → 全体点灯）
   tl.to(refs.titleScrim, { opacity: 1, duration: 0.9, ease: "power2.out" }, T.titleAt - 0.3);

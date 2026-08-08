@@ -118,6 +118,19 @@
   object-fit: contain;
   object-position: center;
 }
+/* 瞬き用の目閉じレイヤー: 目の領域だけをマスクして重ねる。
+   通常PIEROとキャンバス/位置/スケールが完全一致しているため、
+   マスクの外側（肌・鼻・帽子・髪・襟）は常に通常PIEROのまま = 動いて見えない。 */
+.piero-blink {
+  opacity: 0;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse 11% 9% at 42.4% 50.5%, #000 40%, rgba(0, 0, 0, 0) 78%),
+    radial-gradient(ellipse 11% 9% at 57.3% 50.5%, #000 40%, rgba(0, 0, 0, 0) 78%);
+  mask-image: radial-gradient(ellipse 11% 9% at 42.4% 50.5%, #000 40%, rgba(0, 0, 0, 0) 78%),
+    radial-gradient(ellipse 11% 9% at 57.3% 50.5%, #000 40%, rgba(0, 0, 0, 0) 78%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
 .piero__parts {
   position: absolute;
   inset: 0;

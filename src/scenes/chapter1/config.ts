@@ -58,8 +58,10 @@ export const T = {
   spotDur: 1.9,
   pieroAt: 4.6,
   pieroDur: 2.4, // 〜7.0
-  // 0:07–0:09 視線の代替演出（瞳のグリント）
-  gazeAt: 7.2,
+  // 0:07–0:09 一度だけの自然な瞬き（通常PIERO → 目閉じ → 通常PIERO の短いクロスフェード）
+  blinkAt: 8.1,
+  blinkIn: 0.15, // 目を閉じる
+  blinkOut: 0.24, // 目を開ける（合計 ~0.4s）
   // 0:09–0:12 タイトル電飾
   titleAt: 9.0,
   titleGap: 1.0, // 9.0 / 10.0 / 11.0

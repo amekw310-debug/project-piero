@@ -38,6 +38,11 @@ export class Chapter1 implements Scene {
       this.stopAmbient = startAmbient(refs, false);
     });
 
+    // デバッグ用シーク（?debug 付きURLのときのみタイムラインを公開）。通常は非公開。
+    if (new URLSearchParams(window.location.search).has("debug")) {
+      (window as unknown as { __pieroTL?: unknown }).__pieroTL = this.timeline;
+    }
+
     // アクセシビリティ用の控えめなスキップ（Esc / Enter で終端へ）。
     const onKey = (e: KeyboardEvent): void => {
       if (e.key === "Escape" || e.key === "Enter") {

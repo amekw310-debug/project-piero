@@ -17,6 +17,7 @@ export interface StageRefs {
   titleScrim: HTMLElement;
   piero: HTMLElement;
   pieroImg: HTMLImageElement;
+  pieroBlink: HTMLImageElement;
   eyes: { left: HTMLElement; right: HTMLElement };
   titleLines: HTMLElement[];
   choose: HTMLElement;
@@ -67,6 +68,9 @@ export function buildStage(root: HTMLElement): StageRefs {
     <!-- 主役レイヤー: PIERO (piero.png, 透過)。将来: 帽子/髪/顔/鼻/瞳/口を個別パーツ化 -->
     <div class="piero">
       <img class="piero-img" src="${assetUrl("piero.png")}" alt="PIERO" draggable="false" />
+      <!-- 瞬き用: 目を閉じたPIERO。目の領域だけにマスクして通常PIEROの上に重ね、
+           クロスフェードで一度だけ瞬きさせる（顔・鼻・帽子・髪・襟は動かさない）。 -->
+      <img class="piero-img piero-blink" src="${assetUrl("piero-eyes-closed.png")}" alt="" draggable="false" />
       <div class="piero__parts" aria-hidden="true">
         <div class="p-eye p-eye--l" data-part="pupil-left"></div>
         <div class="p-eye p-eye--r" data-part="pupil-right"></div>
@@ -108,7 +112,8 @@ export function buildStage(root: HTMLElement): StageRefs {
     vignette: q<HTMLElement>(".vignette"),
     titleScrim: q<HTMLElement>(".title-scrim"),
     piero: q<HTMLElement>(".piero"),
-    pieroImg: q<HTMLImageElement>(".piero-img"),
+    pieroImg: q<HTMLImageElement>(".piero-img:not(.piero-blink)"),
+    pieroBlink: q<HTMLImageElement>(".piero-blink"),
     eyes: { left: q<HTMLElement>(".p-eye--l"), right: q<HTMLElement>(".p-eye--r") },
     titleLines: Array.from(root.querySelectorAll(".ttl__line")) as HTMLElement[],
     choose: q<HTMLElement>(".choose"),
