@@ -1,0 +1,70 @@
+:root {
+  --piero-bg: #0b0b0f;
+  --piero-fg: #f5f5f5;
+  --piero-accent: #c9a24b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--piero-bg);
+  color: var(--piero-fg);
+  font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Kaku Gothic ProN",
+    "Noto Sans JP", sans-serif;
+  overflow-x: hidden;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/* Chapter 単位の共通ステージ。2.5D の視差レイヤーはここに積む。 */
+.chapter {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* 背景/中景/前景の視差レイヤー用ベース（実装時にアセットを割り当てる） */
+.layer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  will-change: transform;
+}
+
+.chapter__placeholder {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.chapter__placeholder h1 {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 4rem);
+  letter-spacing: 0.08em;
+  color: var(--piero-accent);
+}
+
+.chapter__placeholder p {
+  margin: 0;
+  opacity: 0.7;
+  font-size: 0.95rem;
+}

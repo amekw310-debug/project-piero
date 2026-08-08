@@ -1,0 +1,13 @@
+# Chapter 1 のアセット配置場所
+#
+# ここに Chapter 1 用の静止画（背景 / 中景 / 前景レイヤー、TOP画像など）を置く。
+# public/ 配下のファイルはビルド時にそのままの階層でコピーされる。
+#
+# コード内からは絶対パスで参照する（vite の base 設定が自動で前置される）:
+#   background-image: url("/assets/chapter1/top.jpg")
+#
+# 例:
+#   public/assets/chapter1/top.jpg        ... PIERO の TOP 画像
+#   public/assets/chapter1/layer-back.png ... 背景レイヤー
+#   public/assets/chapter1/layer-mid.png  ... 中景レイヤー
+#   public/assets/chapter1/layer-front.png... 前景レイヤー
