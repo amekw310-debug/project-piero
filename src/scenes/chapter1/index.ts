@@ -1,57 +1,62 @@
-import gsap from "gsap";
+import "../../styles/chapter1.css";
 import type { Scene } from "../types";
+import { buildStage, type StageRefs } from "./stage";
+import { createOpeningTimeline, applyFinalState } from "./openingTimeline";
+import { startAmbient } from "./ambient";
 
 /**
- * Chapter 1 のシーン（土台の空シーン）。
+ * Chapter 1 / WELCOME — Part 1 OPENING（0:00〜0:14）。
  *
- * 現段階はプレビュー確認用のプレースホルダのみ。
- * 本格的な演出（視差レイヤー・スクロール連動など）はまだ実装しない。
+ * 構成:
+ *   stage.ts           … レイヤー構造の DOM（park / piero を独立レイヤーで保持）
+ *   openingTimeline.ts … GSAP のオープニング演出
+ *   ambient.ts         … 終了後の「生きている遊園地」
  *
- * 2.5D → 3D への発展を見据え、演出は必ず GSAP のタイムラインに集約する。
- * ここでは導入確認のためタイトルのフェードインだけを行う。
+ * Part 2（WAITING & DISCOVERY）はまだ実装しない。
  */
 export class Chapter1 implements Scene {
   readonly id = "chapter1";
 
-  private timeline: gsap.core.Timeline | null = null;
+  private refs: StageRefs | null = null;
+  private timeline: ReturnType<typeof createOpeningTimeline> | null = null;
+  private stopAmbient: (() => void) | null = null;
+  private detachKeys: (() => void) | null = null;
 
   mount(root: HTMLElement): void {
-    const section = document.createElement("section");
-    section.className = "chapter";
-    section.dataset.chapter = this.id;
+    const refs = buildStage(root);
+    this.refs = refs;
 
-    // 視差レイヤーの置き場所（実装時に background-image を割り当てる）。
-    // 背景 / 中景 / 前景の3層をあらかじめ用意しておく。
-    const layerBack = document.createElement("div");
-    layerBack.className = "layer layer--back";
-    const layerMid = document.createElement("div");
-    layerMid.className = "layer layer--mid";
-    const layerFront = document.createElement("div");
-    layerFront.className = "layer layer--front";
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      // モーション低減: 演出を飛ばして点灯後の状態を提示する。
+      applyFinalState(refs);
+      this.stopAmbient = startAmbient(refs, true);
+      return;
+    }
 
-    const placeholder = document.createElement("div");
-    placeholder.className = "chapter__placeholder";
-    placeholder.innerHTML = `
-      <h1>PROJECT PIERO</h1>
-      <p>Chapter 1 &mdash; scaffold ready (演出は未実装)</p>
-    `;
-
-    section.append(layerBack, layerMid, layerFront, placeholder);
-    root.appendChild(section);
-
-    // GSAP 動作確認用の最小アニメーション。
-    this.timeline = gsap.timeline();
-    this.timeline.from(placeholder, {
-      opacity: 0,
-      y: 24,
-      duration: 1.2,
-      ease: "power2.out",
+    this.timeline = createOpeningTimeline(refs, () => {
+      this.stopAmbient = startAmbient(refs, false);
     });
+
+    // アクセシビリティ用の控えめなスキップ（Esc / Enter で終端へ）。
+    const onKey = (e: KeyboardEvent): void => {
+      if (e.key === "Escape" || e.key === "Enter") {
+        this.timeline?.progress(1);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    this.detachKeys = () => window.removeEventListener("keydown", onKey);
   }
 
   destroy(): void {
     this.timeline?.kill();
     this.timeline = null;
+    this.stopAmbient?.();
+    this.stopAmbient = null;
+    this.detachKeys?.();
+    this.detachKeys = null;
+    this.refs?.root.replaceChildren();
+    this.refs = null;
   }
 }
 
