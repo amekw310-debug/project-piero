@@ -122,29 +122,41 @@
   position: absolute;
   inset: 0;
 }
-/* 瞳のキャッチライト（視線の代替演出 / 将来 pupil-*.png のアンカー） */
+/* 瞳の反射（発光ではなく、外部のネオン/スポットが濡れた瞳に反射している表現）
+   - 局所的な小さいハイライトのみを screen で乗せ、青い虹彩と黒目は残す
+   - 左右で色・位置を非対称にして、背景照明を拾っているように見せる
+   - 将来 pupil-*.png へ差し替えるためのアンカーも兼ねる */
 .p-eye {
   position: absolute;
-  width: 4.6%;
+  width: 3.4%;
   aspect-ratio: 1 / 1;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(220, 248, 255, 0.95) 0%,
-    rgba(150, 220, 255, 0.5) 42%,
-    transparent 70%
-  );
   mix-blend-mode: screen;
+  background-blend-mode: screen;
   opacity: 0;
+  pointer-events: none;
 }
+/* 向かって左の目: 紫〜ピンク系ネオンの反射 */
 .p-eye--l {
   left: 42.4%;
   top: 51.2%;
+  background:
+    /* 小さな鋭い白いキャッチライト（右上・既存ハイライト付近） */
+    radial-gradient(circle at 64% 32%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.28) 12%, transparent 20%),
+    /* 反対側に細い紫のネオン反射 */
+    radial-gradient(ellipse 22% 10% at 34% 42%, rgba(226, 120, 240, 0.42) 0%, transparent 72%),
+    /* 下側に淡いピンクの色付き反射 */
+    radial-gradient(circle at 48% 66%, rgba(255, 96, 168, 0.28) 0%, transparent 46%);
 }
+/* 向かって右の目: 青〜シアン系ネオンの反射 */
 .p-eye--r {
   left: 57.3%;
   top: 51%;
+  background:
+    radial-gradient(circle at 67% 30%, rgba(255, 255, 255, 0.86) 0%, rgba(232, 250, 255, 0.26) 12%, transparent 20%),
+    radial-gradient(ellipse 20% 10% at 40% 45%, rgba(96, 202, 255, 0.44) 0%, transparent 72%),
+    radial-gradient(circle at 56% 68%, rgba(120, 240, 255, 0.28) 0%, transparent 46%);
 }
 
 /* エッジを落として中央(PIERO)へ視線を集める */

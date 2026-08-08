@@ -26,7 +26,7 @@ function setInitial(refs: StageRefs): void {
     filter: "brightness(0.12)",
     transformOrigin: "50% 50%",
   });
-  gsap.set([refs.eyes.left, refs.eyes.right], { opacity: 0, xPercent: -35 });
+  gsap.set([refs.eyes.left, refs.eyes.right], { opacity: 0, xPercent: -12 });
   refs.titleLines.forEach((line) =>
     gsap.set(line.querySelectorAll(".seg"), { opacity: 0 })
   );
@@ -53,7 +53,7 @@ export function applyFinalState(refs: StageRefs): void {
   gsap.set(refs.vignette, { opacity: 0.92 });
   gsap.set(refs.titleScrim, { opacity: 1 });
   gsap.set(refs.piero, { opacity: 1, yPercent: 0, scale: 1, filter: "brightness(1)" });
-  gsap.set([refs.eyes.left, refs.eyes.right], { opacity: 0 });
+  gsap.set([refs.eyes.left, refs.eyes.right], { opacity: 0.46, xPercent: 0 });
   refs.titleLines.forEach((line) =>
     gsap.set(line.querySelectorAll(".seg"), { opacity: 1 })
   );
@@ -94,13 +94,11 @@ export function createOpeningTimeline(
 
   // 0:07–0:09 視線の代替演出:
   //   piero.png は1枚画像のため瞳自体は動かさない（不自然な変形はしない）。
-  //   代わりに、瞳の位置に小さなキャッチライト（グリント）を出し、
-  //   外側→中央へ移して「目が合った」印象を作り、一度だけ瞬きさせて消す。
-  //   将来 piero-pupil-l/r.png を分割したら、この演出を実際の瞳移動へ置き換える。
-  tl.to(eyes, { opacity: 0.85, duration: 0.6, ease: "power2.out" }, T.gazeAt);
-  tl.to(eyes, { xPercent: 0, duration: 0.9, ease: "power2.inOut" }, T.gazeAt + 0.1);
-  tl.to(eyes, { opacity: 0, duration: 0.11, yoyo: true, repeat: 1, ease: "power1.inOut" }, T.gazeAt + 1.15); // 瞬き
-  tl.to(eyes, { opacity: 0, duration: 0.6, ease: "power1.out" }, T.gazeAt + 1.5); // 画像を汚さないよう消す
+  //   発光ではなく「濡れた瞳に外部のネオン/スポットがゆっくり反射した」ように、
+  //   控えめな反射をそっと灯し、そのまま微かに残す（点滅・パルスはしない）。
+  //   将来 piero-pupil-l/r.png を分割したら実際の瞳移動へ置き換える。
+  tl.to(eyes, { opacity: 0.6, xPercent: 0, duration: 1.1, ease: "power2.out" }, T.gazeAt);
+  tl.to(eyes, { opacity: 0.46, duration: 1.0, ease: "sine.inOut" }, T.gazeAt + 1.3); // 微かな反射として持続
   // ごく僅かな「気づき」（顔は動かさず、全体を極小スケールで前後）
   tl.to(refs.piero, { scale: 1.012, duration: 0.5, yoyo: true, repeat: 1, ease: "sine.inOut" }, T.gazeAt + 0.25);
 
