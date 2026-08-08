@@ -39,6 +39,10 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          # Pages がまだ有効でない場合、この設定で自動的に有効化する
+          # （build_type=workflow でセットアップされる）。
+          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
