@@ -3,7 +3,7 @@
 // - 将来、観覧車・ネオン・瞳・帽子・口などを個別パーツへ差し替えられるよう
 //   アンカー（data-part / data-neon）と %ベースの配置を用意している。
 
-import { assetUrl, NEON_SPOTS, TITLE_LINES, CHOOSE_TEXT } from "./config";
+import { assetUrl, NEON_SPOTS, TITLE_LINES, CHOOSE_TEXT, type Area } from "./config";
 
 export interface StageRefs {
   root: HTMLElement;
@@ -22,6 +22,16 @@ export interface StageRefs {
   titleLines: HTMLElement[];
   choose: HTMLElement;
   blackout: HTMLElement;
+  p2: {
+    hotspots: Record<Area, HTMLElement>;
+    labels: Record<Area, HTMLElement>;
+    glows: Record<Area, HTMLElement>;
+    fog: HTMLElement;
+    ripple: HTMLElement;
+    rail: HTMLElement;
+    confetti: HTMLElement;
+    oddText: HTMLElement;
+  };
 }
 
 const esc = (s: string): string =>
@@ -76,6 +86,13 @@ export function buildStage(root: HTMLElement): StageRefs {
         <div class="p-eye p-eye--r" data-part="pupil-right"></div>
         <!-- 将来ここに hat / mouth / brow などのパーツを追加 -->
       </div>
+      <!-- Part 2: 触れる部位のホットスポット（顔に追従するよう .piero 内に配置） -->
+      <div class="p2-hotspots">
+        <button type="button" class="hot hot--hat" data-area="thrill" aria-label="THRILL"></button>
+        <button type="button" class="hot hot--eyeL" data-area="joy" aria-label="JOY"></button>
+        <button type="button" class="hot hot--eyeR" data-area="odd" aria-label="ODD"></button>
+        <button type="button" class="hot hot--mouth" data-area="mystery" aria-label="MYSTERY"></button>
+      </div>
     </div>
 
     <div class="layer vignette"></div>
@@ -85,6 +102,25 @@ export function buildStage(root: HTMLElement): StageRefs {
     <!-- タイトル電飾 -->
     <div class="layer layer--titles">${titlesMarkup}</div>
     <div class="choose">${esc(CHOOSE_TEXT)}</div>
+
+    <!-- Part 2: エリアごとの予告演出（照明・霧・紙吹雪・歪み・レール） -->
+    <div class="layer p2-fx" aria-hidden="true">
+      <div class="p2-glow p2-glow--thrill"></div>
+      <div class="p2-glow p2-glow--joy"></div>
+      <div class="p2-glow p2-glow--odd"></div>
+      <div class="p2-glow p2-glow--mystery"></div>
+      <div class="p2-rail"></div>
+      <div class="p2-ripple"></div>
+      <div class="p2-fog"></div>
+      <div class="p2-confetti"></div>
+    </div>
+    <!-- Part 2: エリア名（ホバー/タップで初めて出る予告ラベル） -->
+    <div class="layer p2-labels">
+      <div class="p2-label p2-label--thrill">THRILL</div>
+      <div class="p2-label p2-label--joy">JOY</div>
+      <div class="p2-label p2-label--odd"><span class="p2-odd">ODD</span></div>
+      <div class="p2-label p2-label--mystery">MYSTERY</div>
+    </div>
 
     <!-- 開幕前の暗転 -->
     <div class="layer blackout"></div>
@@ -118,5 +154,30 @@ export function buildStage(root: HTMLElement): StageRefs {
     titleLines: Array.from(root.querySelectorAll(".ttl__line")) as HTMLElement[],
     choose: q<HTMLElement>(".choose"),
     blackout: q<HTMLElement>(".blackout"),
+    p2: {
+      hotspots: {
+        thrill: q<HTMLElement>(".hot--hat"),
+        joy: q<HTMLElement>(".hot--eyeL"),
+        odd: q<HTMLElement>(".hot--eyeR"),
+        mystery: q<HTMLElement>(".hot--mouth"),
+      },
+      labels: {
+        thrill: q<HTMLElement>(".p2-label--thrill"),
+        joy: q<HTMLElement>(".p2-label--joy"),
+        odd: q<HTMLElement>(".p2-label--odd"),
+        mystery: q<HTMLElement>(".p2-label--mystery"),
+      },
+      glows: {
+        thrill: q<HTMLElement>(".p2-glow--thrill"),
+        joy: q<HTMLElement>(".p2-glow--joy"),
+        odd: q<HTMLElement>(".p2-glow--odd"),
+        mystery: q<HTMLElement>(".p2-glow--mystery"),
+      },
+      fog: q<HTMLElement>(".p2-fog"),
+      ripple: q<HTMLElement>(".p2-ripple"),
+      rail: q<HTMLElement>(".p2-rail"),
+      confetti: q<HTMLElement>(".p2-confetti"),
+      oddText: q<HTMLElement>(".p2-odd"),
+    },
   };
 }

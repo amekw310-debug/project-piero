@@ -36,6 +36,9 @@ export const NEON_SPOTS: NeonSpot[] = [
   { id: "carousel", xPct: 50, yPct: 55, sizePct: 22, color: "255,140,50" },
 ];
 
+/** Part 2 の4エリア（触れる部位） */
+export type Area = "thrill" | "joy" | "odd" | "mystery";
+
 /** タイトル（電飾看板） */
 export const TITLE_LINES = ["WELCOME TO", "PIERO", "THE PARK OF MANY FACES"];
 export const CHOOSE_TEXT = "CHOOSE YOUR POINT OF VIEW.";

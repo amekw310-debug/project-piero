@@ -3,6 +3,7 @@ import type { Scene } from "../types";
 import { buildStage, type StageRefs } from "./stage";
 import { createOpeningTimeline, applyFinalState } from "./openingTimeline";
 import { startAmbient } from "./ambient";
+import { startDiscovery } from "./discovery";
 
 /**
  * Chapter 1 / WELCOME — Part 1 OPENING（0:00〜0:14）。
@@ -20,6 +21,7 @@ export class Chapter1 implements Scene {
   private refs: StageRefs | null = null;
   private timeline: ReturnType<typeof createOpeningTimeline> | null = null;
   private stopAmbient: (() => void) | null = null;
+  private stopDiscovery: (() => void) | null = null;
   private detachKeys: (() => void) | null = null;
 
   mount(root: HTMLElement): void {
@@ -28,14 +30,17 @@ export class Chapter1 implements Scene {
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) {
-      // モーション低減: 演出を飛ばして点灯後の状態を提示する。
+      // モーション低減: 演出を飛ばして点灯後の状態を提示し、そのまま Part 2 を有効化。
       applyFinalState(refs);
       this.stopAmbient = startAmbient(refs, true);
+      this.stopDiscovery = startDiscovery(refs, true);
       return;
     }
 
     this.timeline = createOpeningTimeline(refs, () => {
+      // OPENING 終了(0:14) → 生きている遊園地(ambient) + Part 2(discovery)
       this.stopAmbient = startAmbient(refs, false);
+      this.stopDiscovery = startDiscovery(refs, false);
     });
 
     // デバッグ用シーク（?debug 付きURLのときのみタイムラインを公開）。通常は非公開。
@@ -58,6 +63,8 @@ export class Chapter1 implements Scene {
     this.timeline = null;
     this.stopAmbient?.();
     this.stopAmbient = null;
+    this.stopDiscovery?.();
+    this.stopDiscovery = null;
     this.detachKeys?.();
     this.detachKeys = null;
     this.refs?.root.replaceChildren();
