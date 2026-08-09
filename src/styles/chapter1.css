@@ -185,8 +185,8 @@
 }
 /* 口: パーツ周囲の肌は隠し、口元だけを重ねる（顔全体は差し替えない） */
 .p-mouth {
-  -webkit-mask-image: radial-gradient(ellipse 40% 22% at 50% 62%, #000 55%, rgba(0, 0, 0, 0) 100%);
-  mask-image: radial-gradient(ellipse 40% 22% at 50% 62%, #000 55%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: radial-gradient(ellipse 40% 32% at 51% 64%, #000 75%, rgba(0, 0, 0, 0) 100%);
+  mask-image: radial-gradient(ellipse 40% 32% at 51% 64%, #000 75%, rgba(0, 0, 0, 0) 100%);
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
 }
@@ -203,7 +203,7 @@
 /* 瞳（虹彩＋黒目のみ）。背景画像は JS で設定（base URL 対応） */
 .p-pupil {
   position: absolute;
-  width: 3.8%;
+  width: 3.4%;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   background-position: center;
@@ -213,12 +213,12 @@
   will-change: transform;
 }
 .p-pupil--l {
-  left: 42.5%;
-  top: 51%;
+  left: 42.51%;
+  top: 50.63%;
 }
 .p-pupil--r {
-  left: 57.3%;
-  top: 50.5%;
+  left: 57.19%;
+  top: 50.49%;
 }
 
 /* エッジを落として中央(PIERO)へ視線を集める */
