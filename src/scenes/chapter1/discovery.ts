@@ -12,6 +12,7 @@ import gsap from "gsap";
 import type { StageRefs } from "./stage";
 import type { Area } from "./config";
 import { playBlink } from "./blink";
+import { setupParts } from "./parts";
 
 const AREAS: Area[] = ["thrill", "joy", "odd", "mystery"];
 
@@ -26,7 +27,24 @@ export function startDiscovery(refs: StageRefs, reduced: boolean): () => void {
   let blinking = false;
   const timers: number[] = [];
 
+  const parts = setupParts(refs, reduced);
+
   refs.stage.classList.add("p2-ready"); // ホットスポットを有効化
+
+  // --- SCENE 08 CURSOR REACTION: 瞳だけがカーソルに少し遅れて反応 ---
+  let lastNx = 0;
+  let lastNy = 0;
+  let suspendTrackUntil = 0;
+  const onPointerMove = (e: PointerEvent): void => {
+    const r = refs.stage.getBoundingClientRect();
+    lastNx = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width - 0.5) * 2));
+    lastNy = Math.max(-1, Math.min(1, ((e.clientY - r.top) / r.height - 0.5) * 2));
+    if (performance.now() >= suspendTrackUntil) parts.pupilTrack(lastNx, lastNy);
+  };
+  if (!coarse && !reduced) {
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    cleanups.push(() => window.removeEventListener("pointermove", onPointerMove));
+  }
 
   // --- 周期的な瞬き（数秒〜十数秒に一度） ---
   const doBlink = (): void => {
@@ -46,14 +64,9 @@ export function startDiscovery(refs: StageRefs, reduced: boolean): () => void {
   if (!reduced) scheduleBlink();
 
   // --- 最初のヒント（5〜6秒、何も発見されなければ） ---
-  // 帽子の独立フロート素材が無いため、帽子付近の淡い明滅で「そこに何かある」を示す（仮）。
+  // 帽子が「フワッ」と一度だけ僅かに浮いて戻る（本物の帽子パーツ）。
   let hintTimer = window.setTimeout(() => {
-    if (visited.size === 0 && !reduced) {
-      gsap
-        .timeline()
-        .to(p2.glows.thrill, { opacity: 0.5, duration: 0.5, ease: "power2.out" })
-        .to(p2.glows.thrill, { opacity: 0, duration: 0.9, ease: "power2.in" }, "+=0.15");
-    }
+    if (visited.size === 0) parts.hatHint();
   }, 5500);
   timers.push(hintTimer);
 
@@ -169,20 +182,35 @@ export function startDiscovery(refs: StageRefs, reduced: boolean): () => void {
     gsap.to(p2.fog, { opacity: 0, duration: 0.9, ease: "power1.out" });
   };
 
-  // --- エリアの予告 ON / OFF ---
+  // --- エリアの予告 ON / OFF（実パーツの反応を含む） ---
   const activate = (area: Area): void => {
     markVisited(area);
     showLabel(area);
     showGlow(area);
+    if (area === "thrill") {
+      parts.liftHat(12); // ヒントより少し大きく浮かせる
+      railStreak();
+    }
     if (area === "joy") confettiBurst();
-    if (area === "thrill") railStreak();
-    if (area === "odd") oddRipple();
-    if (area === "mystery") fogIn();
+    if (area === "odd") {
+      // 右目: 一瞬だけ逆を見てから本来の方向へ戻す
+      suspendTrackUntil = performance.now() + 780;
+      parts.pupilReverseThenCorrect("r", lastNx, lastNy);
+      oddRipple();
+    }
+    if (area === "mystery") {
+      parts.mouthSmile(true); // 口が少しだけ広がる
+      fogIn();
+    }
   };
   const deactivate = (area: Area): void => {
     hideLabel(area);
     hideGlow(area);
-    if (area === "mystery") fogOut();
+    if (area === "thrill") parts.settleHat();
+    if (area === "mystery") {
+      parts.mouthSmile(false);
+      fogOut();
+    }
   };
 
   // --- 4つすべてを触った後: CHOOSE が一度だけ微かに光り、PIERO が一度瞬き ---
@@ -245,6 +273,7 @@ export function startDiscovery(refs: StageRefs, reduced: boolean): () => void {
   return () => {
     timers.forEach((t) => clearTimeout(t));
     cleanups.forEach((c) => c());
+    parts.destroy();
     refs.stage.classList.remove("p2-ready");
     AREAS.forEach((area) => gsap.killTweensOf([p2.labels[area], p2.glows[area]]));
     gsap.killTweensOf([p2.fog, p2.ripple, p2.rail]);

@@ -9,7 +9,4 @@ export default defineConfig({
     // アセット参照の追跡を明示。将来 Three.js の glTF などを扱う際もここを基準にする。
     assetsInlineLimit: 4096,
   },
-  server: {
-    open: true,
-  },
 });
