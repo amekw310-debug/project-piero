@@ -18,13 +18,6 @@ export interface StageRefs {
   piero: HTMLElement;
   pieroImg: HTMLImageElement;
   pieroBlink: HTMLImageElement;
-  parts: {
-    hat: HTMLElement;
-    mouthNormal: HTMLElement;
-    mouthSmile: HTMLElement;
-    pupilL: HTMLElement;
-    pupilR: HTMLElement;
-  };
   eyes: { left: HTMLElement; right: HTMLElement };
   titleLines: HTMLElement[];
   choose: HTMLElement;
@@ -85,16 +78,11 @@ export function buildStage(root: HTMLElement): StageRefs {
     <!-- 主役レイヤー: PIERO (piero.png, 透過)。将来: 帽子/髪/顔/鼻/瞳/口を個別パーツ化 -->
     <div class="piero">
       <img class="piero-img" src="${assetUrl("piero.png")}" alt="PIERO" draggable="false" />
-      <!-- 口パーツ: 通常/笑顔。目の領域外は通常PIEROのまま（顔全体は差し替えない）。 -->
-      <img class="p-part p-mouth p-mouth--normal" src="${assetUrl("piero-mouth.png")}" alt="" draggable="false" />
-      <img class="p-part p-mouth p-mouth--smile" src="${assetUrl("piero-mouth-smile.png")}" alt="" draggable="false" />
-      <!-- 瞳パーツ（虹彩＋黒目のみ）: 白目・顔は動かさず、これだけを数px動かす。 -->
-      <div class="p-pupil p-pupil--l" data-part="pupil-left"></div>
-      <div class="p-pupil p-pupil--r" data-part="pupil-right"></div>
-      <!-- 瞬き用: 目を閉じたPIERO（瞳の上に重ね、瞬き時に瞳を覆う）。 -->
+      <!-- 瞬き用: 目を閉じたPIERO（元PIEROと同一キャンバス・同一座標の透過PNG。
+           inset:0 / 100% で完全一致するため、これは維持）。 -->
       <img class="piero-img piero-blink" src="${assetUrl("piero-eyes-closed.png")}" alt="" draggable="false" />
-      <!-- 帽子パーツ: ヒント/ホバーで僅かに浮く。 -->
-      <img class="p-part p-hat" src="${assetUrl("piero-hat.png")}" alt="" draggable="false" />
+      <!-- 帽子/口/瞳の実パーツ overlay は座標系不一致でスマホ崩れが出たため撤去。
+           元PIEROと同一キャンバス・同一座標の素材が揃い次第、完全一致 overlay として再導入する。 -->
       <div class="piero__parts" aria-hidden="true">
         <div class="p-eye p-eye--l" data-part="pupil-left"></div>
         <div class="p-eye p-eye--r" data-part="pupil-right"></div>
@@ -164,13 +152,6 @@ export function buildStage(root: HTMLElement): StageRefs {
     piero: q<HTMLElement>(".piero"),
     pieroImg: q<HTMLImageElement>(".piero-img:not(.piero-blink)"),
     pieroBlink: q<HTMLImageElement>(".piero-blink"),
-    parts: {
-      hat: q<HTMLElement>(".p-hat"),
-      mouthNormal: q<HTMLElement>(".p-mouth--normal"),
-      mouthSmile: q<HTMLElement>(".p-mouth--smile"),
-      pupilL: q<HTMLElement>(".p-pupil--l"),
-      pupilR: q<HTMLElement>(".p-pupil--r"),
-    },
     eyes: { left: q<HTMLElement>(".p-eye--l"), right: q<HTMLElement>(".p-eye--r") },
     titleLines: Array.from(root.querySelectorAll(".ttl__line")) as HTMLElement[],
     choose: q<HTMLElement>(".choose"),
