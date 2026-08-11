@@ -118,6 +118,45 @@
   object-fit: contain;
   object-position: center;
 }
+
+/* Part 2 レイヤーPIERO（0:14でクロスフェード表示）。初期は非表示。 */
+.piero-v2 {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+/* body / hat: すべて同一キャンバス・同一座標の完全一致 overlay（個別位置補正しない） */
+.pv2-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+.pv2-hat {
+  will-change: transform; /* THRILL の上方向移動のみ（拡大縮小・回転なし） */
+}
+/* 瞳（虹彩＋黒目）。piero-no-hat から切り出し＝静止時は完全一致。視線追従で数pxのみ移動。 */
+.pv2-pupil {
+  position: absolute;
+  width: 3.4%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  will-change: transform;
+}
+.pv2-pupil--l {
+  left: 42.51%;
+  top: 50.59%;
+}
+.pv2-pupil--r {
+  left: 57.16%;
+  top: 50.49%;
+}
 /* 瞬き用の目閉じレイヤー: 目の領域だけをマスクして重ねる。
    通常PIEROとキャンバス/位置/スケールが完全一致しているため、
    マスクの外側（肌・鼻・帽子・髪・襟）は常に通常PIEROのまま = 動いて見えない。 */

@@ -17,7 +17,9 @@ export interface StageRefs {
   titleScrim: HTMLElement;
   piero: HTMLElement;
   pieroImg: HTMLImageElement;
+  pieroV2: HTMLElement;
   pieroBlink: HTMLImageElement;
+  parts: { hat: HTMLElement; pupilL: HTMLElement; pupilR: HTMLElement };
   eyes: { left: HTMLElement; right: HTMLElement };
   titleLines: HTMLElement[];
   choose: HTMLElement;
@@ -77,12 +79,24 @@ export function buildStage(root: HTMLElement): StageRefs {
 
     <!-- 主役レイヤー: PIERO (piero.png, 透過)。将来: 帽子/髪/顔/鼻/瞳/口を個別パーツ化 -->
     <div class="piero">
+      <!-- OPENING(0:00-0:14)の基準。現行 piero.png のまま（変更しない）。 -->
       <img class="piero-img" src="${assetUrl("piero.png")}" alt="PIERO" draggable="false" />
-      <!-- 瞬き用: 目を閉じたPIERO（元PIEROと同一キャンバス・同一座標の透過PNG。
-           inset:0 / 100% で完全一致するため、これは維持）。 -->
+
+      <!-- Part 2 レイヤーPIERO: piero-no-hat(=piero.png の帽子除去版) + 帽子 + 瞳。
+           すべて同一キャンバス・同一座標の完全一致 overlay（CSSでの個別位置補正なし）。
+           0:14で piero.png からここへごく短くクロスフェード（初期 opacity:0）。 -->
+      <div class="piero-v2">
+        <img class="pv2-img pv2-body" src="${assetUrl("piero-no-hat.png")}" alt="" draggable="false" />
+        <!-- 瞳（虹彩＋黒目。piero-no-hat から切り出し＝完全一致）。視線追従で数pxのみ移動。 -->
+        <div class="pv2-pupil pv2-pupil--l" data-part="pupil-left"></div>
+        <div class="pv2-pupil pv2-pupil--r" data-part="pupil-right"></div>
+        <!-- 帽子（piero.png 本来の帽子ピクセル）。THRILLで上方向へ僅かに移動のみ（拡大縮小・回転なし）。 -->
+        <img class="pv2-img pv2-hat" src="${assetUrl("piero-hat.png")}" alt="" draggable="false" />
+      </div>
+
+      <!-- 瞬き: 目閉じPIERO（piero.png=piero-no-hat と同一座標）。OPENINGとPart2の両方を覆う。 -->
       <img class="piero-img piero-blink" src="${assetUrl("piero-eyes-closed.png")}" alt="" draggable="false" />
-      <!-- 帽子/口/瞳の実パーツ overlay は座標系不一致でスマホ崩れが出たため撤去。
-           元PIEROと同一キャンバス・同一座標の素材が揃い次第、完全一致 overlay として再導入する。 -->
+
       <div class="piero__parts" aria-hidden="true">
         <div class="p-eye p-eye--l" data-part="pupil-left"></div>
         <div class="p-eye p-eye--r" data-part="pupil-right"></div>
@@ -151,7 +165,13 @@ export function buildStage(root: HTMLElement): StageRefs {
     titleScrim: q<HTMLElement>(".title-scrim"),
     piero: q<HTMLElement>(".piero"),
     pieroImg: q<HTMLImageElement>(".piero-img:not(.piero-blink)"),
+    pieroV2: q<HTMLElement>(".piero-v2"),
     pieroBlink: q<HTMLImageElement>(".piero-blink"),
+    parts: {
+      hat: q<HTMLElement>(".pv2-hat"),
+      pupilL: q<HTMLElement>(".pv2-pupil--l"),
+      pupilR: q<HTMLElement>(".pv2-pupil--r"),
+    },
     eyes: { left: q<HTMLElement>(".p-eye--l"), right: q<HTMLElement>(".p-eye--r") },
     titleLines: Array.from(root.querySelectorAll(".ttl__line")) as HTMLElement[],
     choose: q<HTMLElement>(".choose"),
