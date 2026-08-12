@@ -190,7 +190,7 @@ export function startDiscovery(refs: StageRefs, reduced: boolean): () => void {
     showLabel(area);
     showGlow(area);
     if (area === "thrill") {
-      parts.liftHat(12); // 帽子だけ上へ（拡大縮小・回転なし）
+      parts.liftHat(); // 帽子だけ上へ（相対量・拡大縮小/回転/左右移動なし）
       railStreak();
     }
     if (area === "joy") confettiBurst();
