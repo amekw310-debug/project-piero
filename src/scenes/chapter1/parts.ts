@@ -25,7 +25,16 @@ export function setupParts(refs: StageRefs, reduced: boolean): PartsApi {
   parts.pupilL.style.backgroundImage = `url("${assetUrl("piero-pupil-l.png")}")`;
   parts.pupilR.style.backgroundImage = `url("${assetUrl("piero-pupil-r.png")}")`;
   gsap.set([parts.pupilL, parts.pupilR], { xPercent: -50, yPercent: -50, x: 0, y: 0 });
-  gsap.set(parts.hat, { yPercent: 0 });
+
+  // 帽子の Y 基準（yPercent = コンテナ高の%）。
+  //  HAT_REST : 通常時の基準位置。頭頂部を少し削った素材に合わせ、帽子下端が頭皮へ
+  //             めり込まず自然に接するよう Y=0 から僅かに上へ補正した値。ここが新しい 0 基準。
+  //  HAT_LIFT : THRILL 時の「追加」上昇量（従来と同じ移動距離。基準からの相対）。
+  //  HAT_HINT : 待機ヒントの追加上昇量。
+  const HAT_REST = -1.5;
+  const HAT_LIFT = -12;
+  const HAT_HINT = -3;
+  gsap.set(parts.hat, { yPercent: HAT_REST });
 
   // 瞳の最大移動はコンテナ幅基準（PC/スマホ同比率）。ごく僅か。
   const cw = refs.piero.getBoundingClientRect().width || 1350;
@@ -64,21 +73,22 @@ export function setupParts(refs: StageRefs, reduced: boolean): PartsApi {
         .to(parts.pupilR, { x: -nx * MAXX - MAXX * 0.8, y: -ny * MAXY, duration: 0.14, ease: "power2.out" })
         .to(parts.pupilR, { x: nx * MAXX, y: ny * MAXY, duration: 0.5, ease: "power2.inOut" }, "+=0.12");
     },
-    // THRILL: 帽子だけ上へ「フワッ」と大きく浮く。基準(Y=0)は piero.png と一致する通常位置。
+    // THRILL: 帽子だけ上へ「フワッ」と大きく浮く。通常時の基準(HAT_REST)から
+    // 一定量(HAT_LIFT)だけ上昇する＝浮遊距離・速度・ease は従来のまま。
     // 移動量は PIERO本体サイズ基準の相対量(yPercent=コンテナ高の%)＝PC/スマホとも比例。
     // 上方向のみ・拡大縮小・回転・左右移動なし。帽子上部が画角外へ出るのは許容（浮遊優先）。
     liftHat(dur = 0.42) {
-      gsap.to(parts.hat, { yPercent: -12, duration: dur, ease: "power2.out" });
+      gsap.to(parts.hat, { yPercent: HAT_REST + HAT_LIFT, duration: dur, ease: "power2.out" });
     },
     settleHat(dur = 0.5) {
-      gsap.to(parts.hat, { yPercent: 0, duration: dur, ease: "power2.inOut" }); // 正確に通常位置(Y=0)へ
+      gsap.to(parts.hat, { yPercent: HAT_REST, duration: dur, ease: "power2.inOut" }); // 正確に通常位置へ
     },
     hatHint() {
       if (reduced) return;
       gsap
         .timeline()
-        .to(parts.hat, { yPercent: -3, duration: 0.42, ease: "power2.out" })
-        .to(parts.hat, { yPercent: 0, duration: 0.6, ease: "power2.inOut" }, "+=0.12");
+        .to(parts.hat, { yPercent: HAT_REST + HAT_HINT, duration: 0.42, ease: "power2.out" })
+        .to(parts.hat, { yPercent: HAT_REST, duration: 0.6, ease: "power2.inOut" }, "+=0.12");
     },
     destroy() {
       gsap.killTweensOf([parts.pupilL, parts.pupilR, parts.hat]);
