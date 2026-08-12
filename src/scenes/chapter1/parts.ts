@@ -64,19 +64,20 @@ export function setupParts(refs: StageRefs, reduced: boolean): PartsApi {
         .to(parts.pupilR, { x: -nx * MAXX - MAXX * 0.8, y: -ny * MAXY, duration: 0.14, ease: "power2.out" })
         .to(parts.pupilR, { x: nx * MAXX, y: ny * MAXY, duration: 0.5, ease: "power2.inOut" }, "+=0.12");
     },
-    // THRILL: 帽子だけ上へ「フワッ」。移動量は PIERO本体サイズ基準の相対量(yPercent=
-    // コンテナ高の%)＝PC/スマホとも比例。上方向のみ・拡大縮小・回転・左右移動なし。
+    // THRILL: 帽子だけ上へ「フワッ」と大きく浮く。基準(Y=0)は piero.png と一致する通常位置。
+    // 移動量は PIERO本体サイズ基準の相対量(yPercent=コンテナ高の%)＝PC/スマホとも比例。
+    // 上方向のみ・拡大縮小・回転・左右移動なし。帽子上部が画角外へ出るのは許容（浮遊優先）。
     liftHat(dur = 0.42) {
-      gsap.to(parts.hat, { yPercent: -2.5, duration: dur, ease: "power2.out" });
+      gsap.to(parts.hat, { yPercent: -12, duration: dur, ease: "power2.out" });
     },
     settleHat(dur = 0.5) {
-      gsap.to(parts.hat, { yPercent: 0, duration: dur, ease: "power2.inOut" }); // 正確に元位置へ
+      gsap.to(parts.hat, { yPercent: 0, duration: dur, ease: "power2.inOut" }); // 正確に通常位置(Y=0)へ
     },
     hatHint() {
       if (reduced) return;
       gsap
         .timeline()
-        .to(parts.hat, { yPercent: -1.2, duration: 0.42, ease: "power2.out" })
+        .to(parts.hat, { yPercent: -3, duration: 0.42, ease: "power2.out" })
         .to(parts.hat, { yPercent: 0, duration: 0.6, ease: "power2.inOut" }, "+=0.12");
     },
     destroy() {
