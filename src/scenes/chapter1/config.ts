@@ -1,9 +1,13 @@
 // Chapter 1 / WELCOME — OPENING の設定値（タイミング・レイアウト・アセット）
 // 演出のタイミングやパーツ位置はここに集約し、タイムライン側はデータ駆動にする。
 
-/** public/assets/chapter1/ 配下のアセットURL（Vite の base を自動付与） */
+/** アセットのキャッシュバスター。素材(PNG)を差し替えたら必ずこの値を更新する。
+ *  ファイル名は据え置きのため、これが無いとブラウザ/CDN が旧画像をキャッシュ表示し得る。 */
+export const ASSET_VERSION = "20260812b";
+
+/** public/assets/chapter1/ 配下のアセットURL（Vite の base + キャッシュバスターを自動付与） */
 export const assetUrl = (name: string): string =>
-  `${import.meta.env.BASE_URL}assets/chapter1/${name}`;
+  `${import.meta.env.BASE_URL}assets/chapter1/${name}?v=${ASSET_VERSION}`;
 
 /** piero.png のアスペクト比（1536 x 1024）。パーツ位置(%)はこの画像基準で揃える。 */
 export const PIERO_ASPECT_W = 1536;
