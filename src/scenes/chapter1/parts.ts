@@ -13,6 +13,8 @@ export interface PartsApi {
   revealV2(): void;
   pupilTrack(nx: number, ny: number): void;
   pupilReverseThenCorrect(nx: number, ny: number): void;
+  oddEyeFlare(): void;
+  oddEyeCalm(): void;
   liftHat(dur?: number): void;
   settleHat(dur?: number): void;
   hatHint(): void;
@@ -73,6 +75,41 @@ export function setupParts(refs: StageRefs, reduced: boolean): PartsApi {
         .to(parts.pupilR, { x: -nx * MAXX - MAXX * 0.8, y: -ny * MAXY, duration: 0.14, ease: "power2.out" })
         .to(parts.pupilR, { x: nx * MAXX, y: ny * MAXY, duration: 0.5, ease: "power2.inOut" }, "+=0.12");
     },
+    // ODD: 右目ホバー時に「奥から漏れる」青〜シアンの強い発光。
+    //   入り: 約0.2秒で一度強く（少しまぶしい）→ 約0.42秒で落ち着いた青発光へ。
+    //   ホラー的な点滅はせず、瞳の反射(p-eye--r)も僅かに拾わせて自然に。
+    oddEyeFlare() {
+      const glow = refs.p2.oddEyeGlow;
+      const eye = refs.eyes.right;
+      gsap.killTweensOf([glow, eye]);
+      if (reduced) {
+        gsap.set(glow, { opacity: 0.6, scale: 1 });
+        gsap.set(eye, { opacity: 0.5 });
+        return;
+      }
+      gsap
+        .timeline()
+        .fromTo(
+          glow,
+          { opacity: 0, scale: 0.82 },
+          { opacity: 1, scale: 1.06, duration: 0.2, ease: "power2.out" }
+        )
+        .to(glow, { opacity: 0.62, scale: 1, duration: 0.42, ease: "power2.inOut" });
+      // 白目/虹彩の反射ハイライトも一段強める（真っ白には飛ばさない）
+      gsap.fromTo(eye, { opacity: 0 }, { opacity: 0.55, duration: 0.22, ease: "power2.out" });
+    },
+    oddEyeCalm() {
+      const glow = refs.p2.oddEyeGlow;
+      const eye = refs.eyes.right;
+      gsap.killTweensOf([glow, eye]);
+      if (reduced) {
+        gsap.set(glow, { opacity: 0 });
+        gsap.set(eye, { opacity: 0 });
+        return;
+      }
+      gsap.to(glow, { opacity: 0, scale: 0.9, duration: 0.4, ease: "power2.out" });
+      gsap.to(eye, { opacity: 0, duration: 0.4, ease: "power2.out" });
+    },
     // THRILL: 帽子だけ上へ「フワッ」と大きく浮く。通常時の基準(HAT_REST)から
     // 一定量(HAT_LIFT)だけ上昇する＝浮遊距離・速度・ease は従来のまま。
     // 移動量は PIERO本体サイズ基準の相対量(yPercent=コンテナ高の%)＝PC/スマホとも比例。
@@ -91,7 +128,7 @@ export function setupParts(refs: StageRefs, reduced: boolean): PartsApi {
         .to(parts.hat, { yPercent: HAT_REST, duration: 0.6, ease: "power2.inOut" }, "+=0.12");
     },
     destroy() {
-      gsap.killTweensOf([parts.pupilL, parts.pupilR, parts.hat]);
+      gsap.killTweensOf([parts.pupilL, parts.pupilR, parts.hat, refs.p2.oddEyeGlow, refs.eyes.right]);
     },
   };
 }

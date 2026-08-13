@@ -33,6 +33,7 @@ export interface StageRefs {
     rail: HTMLElement;
     confetti: HTMLElement;
     oddText: HTMLElement;
+    oddEyeGlow: HTMLElement;
   };
 }
 
@@ -96,6 +97,10 @@ export function buildStage(root: HTMLElement): StageRefs {
 
       <!-- 瞬き: 目閉じPIERO（piero.png=piero-no-hat と同一座標）。OPENINGとPart2の両方を覆う。 -->
       <img class="piero-img piero-blink" src="${assetUrl("piero-eyes-closed.png")}" alt="" draggable="false" />
+
+      <!-- ODD: 右目ホバー時に「目の奥から漏れる」青〜シアンの発光。顔に追従するよう .piero 内。
+           虹彩コア→瞳外周グロー→周囲の顔への淡い青ハローを screen で重ねる（初期 opacity:0）。 -->
+      <div class="p2-eyeglow p2-eyeglow--odd" aria-hidden="true"></div>
 
       <div class="piero__parts" aria-hidden="true">
         <div class="p-eye p-eye--l" data-part="pupil-left"></div>
@@ -200,6 +205,7 @@ export function buildStage(root: HTMLElement): StageRefs {
       rail: q<HTMLElement>(".p2-rail"),
       confetti: q<HTMLElement>(".p2-confetti"),
       oddText: q<HTMLElement>(".p2-odd"),
+      oddEyeGlow: q<HTMLElement>(".p2-eyeglow--odd"),
     },
   };
 }

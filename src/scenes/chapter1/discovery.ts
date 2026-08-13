@@ -195,6 +195,8 @@ export function startDiscovery(refs: StageRefs, reduced: boolean): () => void {
     }
     if (area === "joy") confettiBurst();
     if (area === "odd") {
+      // 右目そのものが強く反応: 青〜シアンの強い発光（ODD演出の入口）
+      parts.oddEyeFlare();
       // 右目: 一瞬だけ逆を見てから本来方向へ戻す
       suspendTrackUntil = performance.now() + 780;
       parts.pupilReverseThenCorrect(lastNx, lastNy);
@@ -207,6 +209,7 @@ export function startDiscovery(refs: StageRefs, reduced: boolean): () => void {
     hideLabel(area);
     hideGlow(area);
     if (area === "thrill") parts.settleHat(); // 帽子を正確な元位置へ
+    if (area === "odd") parts.oddEyeCalm(); // 右目の発光を通常へ戻す
     if (area === "mystery") fogOut();
   };
 

@@ -211,6 +211,35 @@
     radial-gradient(circle at 56% 68%, rgba(120, 240, 255, 0.28) 0%, transparent 46%);
 }
 
+/* ODD: 右目ホバー時の強いブルーライト。右目中心に置き、screen で「奥から漏れる光」を表現。
+   - 虹彩コア: シアン〜青白（小さく強い。青い虹彩は screen 合成で残る＝完全な白飛びにしない）
+   - 瞳外周: 濃いブルーのグロー
+   - 白目/周囲の顔: 淡い青の反射が僅かに広がる（顔全体は青くしすぎない＝狭く保つ）
+   JSで opacity/scale を制御（初期は非表示）。 */
+.p2-eyeglow {
+  position: absolute;
+  width: 20%;
+  aspect-ratio: 1 / 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  mix-blend-mode: screen;
+  filter: blur(5px);
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+.p2-eyeglow--odd {
+  left: 57.3%;
+  top: 50.7%;
+  background:
+    /* 1) 虹彩コア: 強いシアン〜青白の発光（中心は白飛びさせないため青みを残す） */
+    radial-gradient(circle at 50% 50%, rgba(206, 246, 255, 0.95) 0%, rgba(96, 205, 255, 0.85) 7%, rgba(64, 170, 255, 0.5) 15%, transparent 26%),
+    /* 2) 瞳の外周リング: 濃いブルーのグロー */
+    radial-gradient(circle at 50% 50%, transparent 16%, rgba(60, 160, 255, 0.6) 26%, rgba(50, 130, 255, 0.28) 40%, transparent 56%),
+    /* 3) 白目〜周囲の顔へ淡く広がる青い反射（狭めに保つ） */
+    radial-gradient(circle at 50% 50%, rgba(80, 150, 255, 0.26) 40%, rgba(70, 140, 255, 0.1) 60%, transparent 78%);
+}
+
 /* エッジを落として中央(PIERO)へ視線を集める */
 .vignette {
   background: radial-gradient(
