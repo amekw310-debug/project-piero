@@ -34,6 +34,8 @@ export interface StageRefs {
     confetti: HTMLElement;
     oddText: HTMLElement;
     oddEyeGlow: HTMLElement;
+    joyEyeGlow: HTMLElement;
+    joyEyeFlare: HTMLElement;
   };
 }
 
@@ -101,6 +103,11 @@ export function buildStage(root: HTMLElement): StageRefs {
       <!-- ODD: 右目ホバー時に「目の奥から漏れる」青〜シアンの発光。顔に追従するよう .piero 内。
            虹彩コア→瞳外周グロー→周囲の顔への淡い青ハローを screen で重ねる（初期 opacity:0）。 -->
       <div class="p2-eyeglow p2-eyeglow--odd" aria-hidden="true"></div>
+
+      <!-- JOY: 左目ホバー時に瞳がライトブルーへ強く発光。中心＝左目の虹彩に一致（%基準）。
+           中心の強い光＋外側の柔らかい光の多段グローと、瞳中心を通る横フレアを screen で重ねる。 -->
+      <div class="p2-eyeflare p2-eyeflare--joy" aria-hidden="true"></div>
+      <div class="p2-eyeglow p2-eyeglow--joy" aria-hidden="true"></div>
 
       <div class="piero__parts" aria-hidden="true">
         <div class="p-eye p-eye--l" data-part="pupil-left"></div>
@@ -206,6 +213,8 @@ export function buildStage(root: HTMLElement): StageRefs {
       confetti: q<HTMLElement>(".p2-confetti"),
       oddText: q<HTMLElement>(".p2-odd"),
       oddEyeGlow: q<HTMLElement>(".p2-eyeglow--odd"),
+      joyEyeGlow: q<HTMLElement>(".p2-eyeglow--joy"),
+      joyEyeFlare: q<HTMLElement>(".p2-eyeflare--joy"),
     },
   };
 }

@@ -240,6 +240,46 @@
     radial-gradient(circle at 50% 50%, rgba(80, 150, 255, 0.26) 40%, rgba(70, 140, 255, 0.1) 60%, transparent 78%);
 }
 
+/* JOY: 左目ホバー時の強いライトブルー発光。中心＝左目の虹彩(42.4%/51%)に一致（%基準・レスポンシブ）。
+   中心の強い光＋外側の柔らかい光の多段グロー。青い虹彩の形は screen 合成で残す（白飛びさせない）。 */
+.p2-eyeglow--joy {
+  left: 42.4%;
+  top: 51%;
+  width: 22%;
+  filter: blur(6px);
+  background:
+    /* 1) 中心光: ライトブルー〜白に近い強い光源（小さく強い） */
+    radial-gradient(circle at 50% 50%, rgba(236, 250, 255, 0.98) 0%, rgba(150, 222, 255, 0.9) 6%, rgba(96, 194, 255, 0.55) 14%, transparent 24%),
+    /* 2) 虹彩の発光: 元の青い虹彩全体を鮮やかなライトブルーに */
+    radial-gradient(circle at 50% 50%, rgba(120, 208, 255, 0.6) 8%, rgba(92, 184, 255, 0.32) 22%, transparent 44%),
+    /* 3) 外側グロー: 周囲へ柔らかく広がるライトブルー（狭めに保つ） */
+    radial-gradient(circle at 50% 50%, rgba(110, 194, 255, 0.3) 34%, rgba(90, 176, 255, 0.12) 58%, transparent 80%);
+}
+/* 瞳中心を通る横方向のライトフレア（中心ほど明るく外側ほど透明。硬い線にしない）。 */
+.p2-eyeflare {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: screen;
+  filter: blur(3px);
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+.p2-eyeflare--joy {
+  left: 42.4%;
+  top: 50.7%;
+  width: 34%;
+  height: 4.4%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse 50% 50% at 50% 50%,
+    rgba(226, 247, 255, 0.95) 0%,
+    rgba(150, 220, 255, 0.55) 16%,
+    rgba(120, 200, 255, 0.18) 44%,
+    transparent 76%
+  );
+}
+
 /* エッジを落として中央(PIERO)へ視線を集める */
 .vignette {
   background: radial-gradient(

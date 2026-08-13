@@ -193,7 +193,10 @@ export function startDiscovery(refs: StageRefs, reduced: boolean): () => void {
       parts.liftHat(); // 帽子だけ上へ（相対量・拡大縮小/回転/左右移動なし）
       railStreak();
     }
-    if (area === "joy") confettiBurst();
+    if (area === "joy") {
+      parts.joyEyeFlare(); // 左目がライトブルーへ強く発光（JOYの操作ポイントを明示）
+      confettiBurst();
+    }
     if (area === "odd") {
       // 右目そのものが強く反応: 青〜シアンの強い発光（ODD演出の入口）
       parts.oddEyeFlare();
@@ -209,6 +212,7 @@ export function startDiscovery(refs: StageRefs, reduced: boolean): () => void {
     hideLabel(area);
     hideGlow(area);
     if (area === "thrill") parts.settleHat(); // 帽子を正確な元位置へ
+    if (area === "joy") parts.joyEyeCalm(); // 左目の発光を通常へ戻す
     if (area === "odd") parts.oddEyeCalm(); // 右目の発光を通常へ戻す
     if (area === "mystery") fogOut();
   };

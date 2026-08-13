@@ -15,6 +15,8 @@ export interface PartsApi {
   pupilReverseThenCorrect(nx: number, ny: number): void;
   oddEyeFlare(): void;
   oddEyeCalm(): void;
+  joyEyeFlare(): void;
+  joyEyeCalm(): void;
   liftHat(dur?: number): void;
   settleHat(dur?: number): void;
   hatHint(): void;
@@ -42,6 +44,9 @@ export function setupParts(refs: StageRefs, reduced: boolean): PartsApi {
   const cw = refs.piero.getBoundingClientRect().width || 1350;
   const MAXX = cw * 0.0026;
   const MAXY = cw * 0.0018;
+
+  // JOY のホバー中の微弱な脈動（保持して離脱時に停止する）。
+  let joyPulse: gsap.core.Tween | null = null;
 
   const d = 0.55;
   const lx = gsap.quickTo(parts.pupilL, "x", { duration: d, ease: "power2" });
@@ -110,6 +115,53 @@ export function setupParts(refs: StageRefs, reduced: boolean): PartsApi {
       gsap.to(glow, { opacity: 0, scale: 0.9, duration: 0.4, ease: "power2.out" });
       gsap.to(eye, { opacity: 0, duration: 0.4, ease: "power2.out" });
     },
+    // JOY: 左目ホバー時、瞳がライトブルーへ強く発光（中心光＋外側グロー＋横フレア）。
+    //   入り: 約0.3秒で強く点灯 → 保持中はごく弱い脈動（点滅にはしない）。
+    joyEyeFlare() {
+      const glow = refs.p2.joyEyeGlow;
+      const flare = refs.p2.joyEyeFlare;
+      const eye = refs.eyes.left;
+      joyPulse?.kill();
+      joyPulse = null;
+      gsap.killTweensOf([glow, flare, eye]);
+      if (reduced) {
+        gsap.set(glow, { opacity: 0.85, scale: 1 });
+        gsap.set(flare, { opacity: 0.7, scaleX: 1 });
+        gsap.set(eye, { opacity: 0.6 });
+        return;
+      }
+      gsap
+        .timeline({
+          onComplete: () => {
+            // 保持中の微弱な脈動（光量が僅かに揺れるだけ・点滅しない）
+            joyPulse = gsap.to([glow, flare], {
+              opacity: "-=0.08",
+              duration: 1.25,
+              ease: "sine.inOut",
+              yoyo: true,
+              repeat: -1,
+            });
+          },
+        })
+        .fromTo(glow, { opacity: 0, scale: 0.82 }, { opacity: 0.94, scale: 1.03, duration: 0.3, ease: "power2.out" }, 0)
+        .fromTo(flare, { opacity: 0, scaleX: 0.5 }, { opacity: 0.82, scaleX: 1, duration: 0.32, ease: "power2.out" }, 0.04);
+      gsap.fromTo(eye, { opacity: 0 }, { opacity: 0.6, duration: 0.3, ease: "power2.out" });
+    },
+    joyEyeCalm() {
+      const glow = refs.p2.joyEyeGlow;
+      const flare = refs.p2.joyEyeFlare;
+      const eye = refs.eyes.left;
+      joyPulse?.kill();
+      joyPulse = null;
+      gsap.killTweensOf([glow, flare, eye]);
+      if (reduced) {
+        gsap.set([glow, flare, eye], { opacity: 0 });
+        return;
+      }
+      gsap.to(glow, { opacity: 0, scale: 0.9, duration: 0.42, ease: "power2.out" });
+      gsap.to(flare, { opacity: 0, scaleX: 0.6, duration: 0.42, ease: "power2.out" });
+      gsap.to(eye, { opacity: 0, duration: 0.42, ease: "power2.out" });
+    },
     // THRILL: 帽子だけ上へ「フワッ」と大きく浮く。通常時の基準(HAT_REST)から
     // 一定量(HAT_LIFT)だけ上昇する＝浮遊距離・速度・ease は従来のまま。
     // 移動量は PIERO本体サイズ基準の相対量(yPercent=コンテナ高の%)＝PC/スマホとも比例。
@@ -128,7 +180,18 @@ export function setupParts(refs: StageRefs, reduced: boolean): PartsApi {
         .to(parts.hat, { yPercent: HAT_REST, duration: 0.6, ease: "power2.inOut" }, "+=0.12");
     },
     destroy() {
-      gsap.killTweensOf([parts.pupilL, parts.pupilR, parts.hat, refs.p2.oddEyeGlow, refs.eyes.right]);
+      joyPulse?.kill();
+      joyPulse = null;
+      gsap.killTweensOf([
+        parts.pupilL,
+        parts.pupilR,
+        parts.hat,
+        refs.p2.oddEyeGlow,
+        refs.eyes.right,
+        refs.p2.joyEyeGlow,
+        refs.p2.joyEyeFlare,
+        refs.eyes.left,
+      ]);
     },
   };
 }
