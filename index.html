@@ -3,6 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- index.html 自身はキャッシュさせず毎回再検証する。ハッシュ付きの JS/CSS と
+         ?v= 付きの画像はキャッシュ可のまま。これにより再デプロイ後に旧 index.html が
+         「消えた旧バンドル」を参照して JS が 404 → 黒画面、という事故を防ぐ。 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>Project PIERO</title>
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="/src/styles/main.css" />
