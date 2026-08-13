@@ -125,9 +125,9 @@ export function setupParts(refs: StageRefs, reduced: boolean): PartsApi {
       joyPulse = null;
       gsap.killTweensOf([glow, flare, eye]);
       if (reduced) {
-        gsap.set(glow, { opacity: 0.85, scale: 1 });
-        gsap.set(flare, { opacity: 0.7, scaleX: 1 });
-        gsap.set(eye, { opacity: 0.6 });
+        gsap.set(glow, { opacity: 1, scale: 1 });
+        gsap.set(flare, { opacity: 0.9, scaleX: 1 });
+        gsap.set(eye, { opacity: 0.7 });
         return;
       }
       gsap
@@ -143,9 +143,9 @@ export function setupParts(refs: StageRefs, reduced: boolean): PartsApi {
             });
           },
         })
-        .fromTo(glow, { opacity: 0, scale: 0.82 }, { opacity: 0.94, scale: 1.03, duration: 0.3, ease: "power2.out" }, 0)
-        .fromTo(flare, { opacity: 0, scaleX: 0.5 }, { opacity: 0.82, scaleX: 1, duration: 0.32, ease: "power2.out" }, 0.04);
-      gsap.fromTo(eye, { opacity: 0 }, { opacity: 0.6, duration: 0.3, ease: "power2.out" });
+        .fromTo(glow, { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1.04, duration: 0.3, ease: "power2.out" }, 0)
+        .fromTo(flare, { opacity: 0, scaleX: 0.5 }, { opacity: 0.92, scaleX: 1, duration: 0.32, ease: "power2.out" }, 0.04);
+      gsap.fromTo(eye, { opacity: 0 }, { opacity: 0.7, duration: 0.3, ease: "power2.out" });
     },
     joyEyeCalm() {
       const glow = refs.p2.joyEyeGlow;

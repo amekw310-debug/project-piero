@@ -104,11 +104,6 @@ export function buildStage(root: HTMLElement): StageRefs {
            虹彩コア→瞳外周グロー→周囲の顔への淡い青ハローを screen で重ねる（初期 opacity:0）。 -->
       <div class="p2-eyeglow p2-eyeglow--odd" aria-hidden="true"></div>
 
-      <!-- JOY: 左目ホバー時に瞳がライトブルーへ強く発光。中心＝左目の虹彩に一致（%基準）。
-           中心の強い光＋外側の柔らかい光の多段グローと、瞳中心を通る横フレアを screen で重ねる。 -->
-      <div class="p2-eyeflare p2-eyeflare--joy" aria-hidden="true"></div>
-      <div class="p2-eyeglow p2-eyeglow--joy" aria-hidden="true"></div>
-
       <div class="piero__parts" aria-hidden="true">
         <div class="p-eye p-eye--l" data-part="pupil-left"></div>
         <div class="p-eye p-eye--r" data-part="pupil-right"></div>
@@ -127,6 +122,15 @@ export function buildStage(root: HTMLElement): StageRefs {
 
     <!-- タイトル可読性のための控えめなスクリム -->
     <div class="layer title-scrim"></div>
+
+    <!-- JOY: 左目ホバー発光レイヤー。vignette / title-scrim より前面、タイトル文字より後ろに置く
+         （z-index関係は維持）。.piero と同一ジオメトリ(inset:0 / margin:auto / 同アスペクト)なので
+         %座標が左目の虹彩中心に一致し、レスポンシブでも一緒に移動する。 -->
+    <div class="piero-eyefx" aria-hidden="true">
+      <div class="p2-eyeflare p2-eyeflare--joy"></div>
+      <div class="p2-eyeglow p2-eyeglow--joy"></div>
+    </div>
+
     <!-- タイトル電飾 -->
     <div class="layer layer--titles">${titlesMarkup}</div>
     <div class="choose">${esc(CHOOSE_TEXT)}</div>
