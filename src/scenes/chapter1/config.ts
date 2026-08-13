@@ -3,7 +3,7 @@
 
 /** アセットのキャッシュバスター。素材(PNG)を差し替えたら必ずこの値を更新する。
  *  ファイル名は据え置きのため、これが無いとブラウザ/CDN が旧画像をキャッシュ表示し得る。 */
-export const ASSET_VERSION = "20260812b";
+export const ASSET_VERSION = "20260813a";
 
 /** public/assets/chapter1/ 配下のアセットURL（Vite の base + キャッシュバスターを自動付与） */
 export const assetUrl = (name: string): string =>

@@ -27,11 +27,11 @@ export function setupParts(refs: StageRefs, reduced: boolean): PartsApi {
   gsap.set([parts.pupilL, parts.pupilR], { xPercent: -50, yPercent: -50, x: 0, y: 0 });
 
   // 帽子の Y 基準（yPercent = コンテナ高の%）。
-  //  HAT_REST : 通常時の基準位置。頭頂部を少し削った素材に合わせ、帽子下端が頭皮へ
-  //             めり込まず自然に接するよう Y=0 から僅かに上へ補正した値。ここが新しい 0 基準。
-  //  HAT_LIFT : THRILL 時の「追加」上昇量（従来と同じ移動距離。基準からの相対）。
+  //  HAT_REST : 通常時の基準位置。最新の piero-no-hat / piero-hat は同一座標で
+  //             重ねると帽子下端が頭頂部へ自然に接するよう作られているため 0（=素材のまま）。
+  //  HAT_LIFT : THRILL 時の「追加」上昇量（基準からの相対。浮遊距離・速度は従来のまま）。
   //  HAT_HINT : 待機ヒントの追加上昇量。
-  const HAT_REST = -1.5;
+  const HAT_REST = 0;
   const HAT_LIFT = -12;
   const HAT_HINT = -3;
   gsap.set(parts.hat, { yPercent: HAT_REST });
